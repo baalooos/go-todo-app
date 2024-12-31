@@ -1,9 +1,8 @@
-package db_init
+package dbinit
 
 import (
 	"fmt"
 
-	//"database/sql"
 	"errors"
 	"log"
 	"os"
@@ -17,34 +16,41 @@ func createTable(db *sql.DB) {
 	createTasksTableSQL := `CREATE TABLE tasks (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
 		"name" TEXT,
-		"description" TEXT,
-		"creation_date" DATE,
-		"due_date" DATE
-		);` // SQL Statement for Create Table
+		"description" TEXT
+		);`
+	// "creation_date" DATE,
+	// "due_date" DATE
+	// SQL Statement for Create Table
 
 	log.Println("Create tasks table...")
-	statement, err := db.Prepare(createTasksTableSQL) // Prepare SQL Statement
+	_, err := db.Exec(createTasksTableSQL)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	statement.Exec() // Execute SQL Statements
-	log.Println("student table created")
+	log.Println("Tasks table created")
 }
 
 func testDb(db *sql.DB) {
-	testDb := `SELECT * FROM tasks;`
 	log.Println("Testing the DB")
-	statement, err := db.Prepare(testDb)
+
+	rows, err := db.Query("SELECT * FROM tasks")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("Task:", err)
 	}
-	statement.Exec()
+	defer rows.Close()
+	for rows.Next() {
+		fmt.Println(rows)
+	}
 
 }
 
 func DbInit() {
 	if _, err := os.Stat("sqlite-database.db"); err == nil {
 		fmt.Println("File already exists")
+
+		sqliteDatabase, _ := sql.Open("sqlite", "./sqlite-database.db") // Open the created SQLite File
+		defer sqliteDatabase.Close()                                    // Defer Closing the database
+		testDb(sqliteDatabase)
 	} else if errors.Is(err, os.ErrNotExist) {
 		fmt.Println("init called")
 		file, err := os.Create("sqlite-database.db") // Create SQLite file
@@ -57,7 +63,7 @@ func DbInit() {
 		sqliteDatabase, _ := sql.Open("sqlite", "./sqlite-database.db") // Open the created SQLite File
 		defer sqliteDatabase.Close()                                    // Defer Closing the database
 		createTable(sqliteDatabase)                                     // Create Database Tables
-		testDb(sqliteDatabase)
+		//testDb(sqliteDatabase)
 	}
 
 }

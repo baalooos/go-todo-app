@@ -1,14 +1,16 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
 
+	"github.com/baalooos/go-todo-app/pkg/tasklist"
 	"github.com/spf13/cobra"
 )
+
+var All bool
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
@@ -22,11 +24,15 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list called")
+		if All {
+			tasklist.ListAll()
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
+	listCmd.PersistentFlags().BoolVarP(&All, "list-all", "a", false, "List all tasks")
 
 	// Here you will define your flags and configuration settings.
 
