@@ -7,8 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/baalooos/go-todo-app/pkg/object"
-	"github.com/baalooos/go-todo-app/pkg/taskadd"
+	"github.com/baalooos/go-todo-app/pkg"
 	"github.com/spf13/cobra"
 )
 
@@ -28,11 +27,11 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("add called")
 
-		var new_task object.Task
+		var new_task pkg.Task
 		new_task.Name = TaskName
 		new_task.Description = TaskDescription
 
-		id, err := taskadd.TaskAdd(new_task)
+		id, err := pkg.TaskAdd(new_task)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

@@ -4,7 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/baalooos/go-todo-app/pkg/dbinit"
+	"github.com/baalooos/go-todo-app/pkg"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +16,7 @@ var initCmd = &cobra.Command{
 	If the file already exist, try to open it.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		dbinit.DbInit()
+		pkg.InitDb()
 	},
 }
 

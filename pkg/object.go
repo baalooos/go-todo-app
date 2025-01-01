@@ -1,4 +1,4 @@
-package object
+package pkg
 
 type Task struct {
 	ID          int64

@@ -1,16 +1,13 @@
-package taskadd
+package pkg
 
 import (
 	"fmt"
 
-	"database/sql"
-
-	"github.com/baalooos/go-todo-app/pkg/object"
 	_ "github.com/glebarez/go-sqlite"
 )
 
-func TaskAdd(task object.Task) (int64, error) {
-	db, _ := sql.Open("sqlite", "./sqlite-database.db") // Open the created SQLite File
+func TaskAdd(task Task) (int64, error) {
+	db := DbConnect()
 	defer db.Close()
 
 	fmt.Println(task.Name, task.Description)

@@ -6,11 +6,12 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/baalooos/go-todo-app/pkg/tasklist"
+	"github.com/baalooos/go-todo-app/pkg"
 	"github.com/spf13/cobra"
 )
 
 var All bool
+var Id int64
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
@@ -25,7 +26,9 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("list called")
 		if All {
-			tasklist.ListAll()
+			pkg.ListAll()
+		} else if Id != 0 {
+			pkg.ListByID(Id)
 		}
 	},
 }
@@ -33,6 +36,7 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(listCmd)
 	listCmd.PersistentFlags().BoolVarP(&All, "list-all", "a", false, "List all tasks")
+	listCmd.PersistentFlags().Int64Var(&Id, "id", 0, "id of the task")
 
 	// Here you will define your flags and configuration settings.
 

@@ -1,4 +1,4 @@
-package dbinit
+package pkg
 
 import (
 	"fmt"
@@ -44,7 +44,7 @@ func testDb(db *sql.DB) {
 
 }
 
-func DbInit() {
+func InitDb() {
 	if _, err := os.Stat("sqlite-database.db"); err == nil {
 		fmt.Println("File already exists")
 
