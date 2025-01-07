@@ -11,15 +11,15 @@ import (
 )
 
 var demo_tasks = [3]pkg.Task{
-	pkg.Task{
+	{
 		Name:        "Task1",
 		Description: "My first description",
 	},
-	pkg.Task{
+	{
 		Name:        "Task2",
 		Description: "My second description",
 	},
-	pkg.Task{
+	{
 		Name:        "Task3",
 		Description: "My third description",
 	},
@@ -29,7 +29,7 @@ var demo_tasks = [3]pkg.Task{
 var demoCmd = &cobra.Command{
 	Use:   "demo",
 	Short: "Add dummy task to your Database",
-	Long: `Add dummy task to your Database,
+	Long: `Add 5 dummy tasks to your Database,
 	Example:
 	- go-todo-app demo`,
 	Run: func(cmd *cobra.Command, args []string) {
