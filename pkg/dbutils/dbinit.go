@@ -1,4 +1,4 @@
-package pkg
+package dbutils
 
 import (
 	"fmt"
@@ -12,57 +12,75 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
+func createDb(path string) {
+	file, err := os.Create(path) // Create SQLite file
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	file.Close()
+}
+
 func createTable(db *sql.DB) {
 	createTasksTableSQL := `CREATE TABLE tasks (
 		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
 		"name" TEXT,
 		"description" TEXT
 		);`
-	// "creation_date" DATE,
-	// "due_date" DATE
-	// SQL Statement for Create Table
 
-	log.Println("Create tasks table...")
 	_, err := db.Exec(createTasksTableSQL)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 	log.Println("Tasks table created")
 }
 
-func testDb(db *sql.DB) {
-	log.Println("Testing the DB")
-
-	rows, err := db.Query("SELECT * FROM tasks")
+func deleteDb(path string) {
+	err := os.Remove(path)
 	if err != nil {
-		log.Fatal("Task:", err)
+		log.Fatal(err)
 	}
-	defer rows.Close()
-	for rows.Next() {
-		fmt.Println(rows)
-	}
-
 }
 
-func InitDb() {
-	if _, err := os.Stat("sqlite-database.db"); err == nil {
-		fmt.Println("File already exists")
+func validateDb(db *sql.DB) {
+	log.Println("Testing the DB")
+	// TODO add test to check if the DB is valid when the file exists
+}
 
-		sqliteDatabase, _ := sql.Open("sqlite", "./sqlite-database.db") // Open the created SQLite File
-		defer sqliteDatabase.Close()                                    // Defer Closing the database
-		testDb(sqliteDatabase)
+func testExistence(path string) bool {
+	if _, err := os.Stat(path); err == nil {
+		return true
 	} else if errors.Is(err, os.ErrNotExist) {
-		fmt.Println("init called")
-		file, err := os.Create("sqlite-database.db") // Create SQLite file
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		file.Close()
+		return false
+	} else {
+		log.Fatal(err)
+		return false
+	}
+}
+
+func InitDb(driver string, path string, reset bool) {
+	fmt.Println("init called")
+
+	fmt.Println("Checking if we already have a Db")
+	fileExist := testExistence(path)
+
+	if reset && fileExist {
+		fmt.Println("Deleting file")
+		deleteDb(path)
+
+		fileExist = false
+	}
+
+	if fileExist {
+		sqliteDatabase, _ := sql.Open(driver, path) // Open the created SQLite File
+		defer sqliteDatabase.Close()                // Defer Closing the database
+		validateDb(sqliteDatabase)
+	} else {
+		createDb(path)
 		fmt.Println("sqlite-database.db created")
 
-		sqliteDatabase, _ := sql.Open("sqlite", "./sqlite-database.db") // Open the created SQLite File
-		defer sqliteDatabase.Close()                                    // Defer Closing the database
-		createTable(sqliteDatabase)                                     // Create Database Tables
+		db := DbConnect(driver, path) // Open the created SQLite File
+		defer db.Close()              // Defer Closing the database
+		createTable(db)               // Create Database Tables
 		//testDb(sqliteDatabase)
 	}
 

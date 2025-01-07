@@ -1,4 +1,4 @@
-package pkg
+package dbutils
 
 import (
 	"log"
@@ -8,8 +8,8 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-func DbConnect() *sql.DB {
-	db, err := sql.Open("sqlite", "./sqlite-database.db")
+func DbConnect(driver string, path string) *sql.DB {
+	db, err := sql.Open(driver, path)
 	if err != nil {
 		log.Fatal("Error connecting to DB", err)
 	}
