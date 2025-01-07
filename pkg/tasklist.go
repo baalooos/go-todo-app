@@ -6,11 +6,14 @@ import (
 
 	"database/sql"
 
+	"github.com/baalooos/go-todo-app/pkg/dbutils"
 	_ "github.com/glebarez/go-sqlite"
 )
 
-func ListAll() {
-	db := DbConnect()
+func ListAll(driver string, path string) {
+	var task Task
+
+	db := dbutils.DbConnect(driver, path)
 	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM tasks")
@@ -19,14 +22,22 @@ func ListAll() {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		fmt.Println(rows)
+		// TODO improve rendering
+		// fmt.Println(rows)
+		if err := rows.Scan(&task.ID, &task.Name, &task.Description); err != nil {
+			if err == sql.ErrNoRows {
+				log.Fatal("No task")
+			}
+			log.Fatal(err)
+		}
+		fmt.Println(task.ID, task.Name, task.Description)
 	}
 }
 
-func ListByID(id int64) {
+func ListByID(driver string, path string, id int64) {
 	var task Task
 
-	db := DbConnect()
+	db := dbutils.DbConnect(driver, path)
 	defer db.Close()
 
 	row := db.QueryRow("SELECT * FROM tasks WHERE id = ?", id)

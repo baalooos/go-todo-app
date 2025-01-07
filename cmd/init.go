@@ -4,7 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/baalooos/go-todo-app/pkg"
+	"github.com/baalooos/go-todo-app/pkg/dbutils"
 	"github.com/spf13/cobra"
 )
 
@@ -16,13 +16,14 @@ var initCmd = &cobra.Command{
 	If the file already exist, try to open it.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		pkg.InitDb()
+		dbutils.InitDb(Driver, DbPath, Reset)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
 
+	initCmd.PersistentFlags().BoolVarP(&Reset, "reset", "r", false, "List all tasks")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -11,19 +11,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var TaskName string
-var TaskDescription string
-
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Add a task",
+	Long: `Add a task. You can either do it using flags or dynamically in your terminal.
+	Examples:
+	- task add
+	- task add -n "task_name" -d "my task description"
+	`,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("add called")
 
@@ -31,12 +28,13 @@ to quickly create a Cobra application.`,
 		new_task.Name = TaskName
 		new_task.Description = TaskDescription
 
-		id, err := pkg.TaskAdd(new_task)
+		id, err := pkg.TaskAdd(Driver, DbPath, new_task)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 		fmt.Println("Your new task id is:", id)
 
+		// TODO add interactive command line
 	},
 }
 
@@ -45,6 +43,7 @@ func init() {
 
 	addCmd.PersistentFlags().StringVarP(&TaskName, "name", "n", "", "Name of the task")
 	addCmd.PersistentFlags().StringVarP(&TaskDescription, "description", "d", "", "Description of the task")
+	addCmd.MarkFlagsRequiredTogether("name", "description")
 
 	// Here you will define your flags and configuration settings.
 
