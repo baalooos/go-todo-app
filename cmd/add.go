@@ -25,14 +25,14 @@ var addCmd = &cobra.Command{
 		fmt.Println("add called")
 
 		var new_task pkg.Task
+
 		new_task.Name = TaskName
 		new_task.Description = TaskDescription
 
-		id, err := pkg.TaskAdd(Driver, DbPath, new_task)
+		err := pkg.TaskAdd(Driver, DbPath, new_task)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		fmt.Println("Your new task id is:", id)
 
 		// TODO add interactive command line
 	},

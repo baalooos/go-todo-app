@@ -20,17 +20,23 @@ var deleteCmd = &cobra.Command{
 	`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called with Id:", Id)
-		if Id != 0 {
-			pkg.TaskDelete(Driver, DbPath, Id)
+		fmt.Println("Delete function called.")
+		if Id != "" {
+			Ids = append(Ids, Id)
+			fmt.Println("delete called with Id:", Id)
+			pkg.TaskDelete(Driver, DbPath, Ids)
+		} else if len(Ids) > 0 {
+			fmt.Println("Deleting multiple tasks")
+			pkg.TaskDelete(Driver, DbPath, Ids)
+
 		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deleteCmd)
-	deleteCmd.PersistentFlags().Int64Var(&Id, "id", 0, "id of the task")
-
+	deleteCmd.PersistentFlags().StringVar(&Id, "id", "", "id of the task")
+	deleteCmd.PersistentFlags().StringSliceVar(&Ids, "ids", []string{}, "Ids to delete")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

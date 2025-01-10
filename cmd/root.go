@@ -9,7 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var Id int64
+var Id string
+var Ids []string
 var All bool
 var Reset bool
 var TaskName string

@@ -7,19 +7,27 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-func TaskAdd(driver string, path string, task Task) (int64, error) {
+func TaskAdd(driver string, path string, task Task) error {
+	var taskList []Task
+
 	db := dbutils.DbConnect(driver, path)
 	defer db.Close()
 
 	fmt.Println(task.Name, task.Description)
 	result, err := db.Exec("INSERT INTO tasks (name, description) VALUES (?, ?)", task.Name, task.Description)
 	if err != nil {
-		return 0, fmt.Errorf("addTask: %v", err)
+		return fmt.Errorf("addTask: %v", err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("addAlbum: %v", err)
+		return fmt.Errorf("addAlbum: %v", err)
 	}
-	return id, nil
+	task.ID = id
+
+	taskList = append(taskList, task)
+	fmt.Println("New task added:")
+	PrintTasks(taskList)
+
+	return nil
 }

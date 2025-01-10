@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var demo_tasks = [3]pkg.Task{
+var demoTasks = [3]pkg.Task{
 	{
 		Name:        "Task1",
 		Description: "My first description",
@@ -35,7 +35,7 @@ var demoCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("demo called")
 
-		for _, task := range demo_tasks {
+		for _, task := range demoTasks {
 			pkg.TaskAdd(Driver, DbPath, task)
 		}
 

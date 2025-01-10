@@ -12,6 +12,7 @@ import (
 
 func ListAll(driver string, path string) {
 	var task Task
+	var taskList []Task
 
 	db := dbutils.DbConnect(driver, path)
 	defer db.Close()
@@ -22,30 +23,38 @@ func ListAll(driver string, path string) {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		// TODO improve rendering
-		// fmt.Println(rows)
 		if err := rows.Scan(&task.ID, &task.Name, &task.Description); err != nil {
 			if err == sql.ErrNoRows {
-				log.Fatal("No task")
+				fmt.Println("No task")
+			} else {
+				log.Fatal(err)
 			}
-			log.Fatal(err)
+		} else {
+			taskList = append(taskList, task)
 		}
-		fmt.Println(task.ID, task.Name, task.Description)
 	}
+	PrintTasks(taskList)
 }
 
-func ListByID(driver string, path string, id int64) {
+func ListByID(driver string, path string, ids []string) {
 	var task Task
+	var taskList []Task
 
 	db := dbutils.DbConnect(driver, path)
 	defer db.Close()
 
-	row := db.QueryRow("SELECT * FROM tasks WHERE id = ?", id)
-	if err := row.Scan(&task.ID, &task.Name, &task.Description); err != nil {
-		if err == sql.ErrNoRows {
-			log.Fatal("No task")
+	for _, id := range ids {
+		// TODO make it only one call
+		row := db.QueryRow("SELECT * FROM tasks WHERE id = ?", id)
+		if err := row.Scan(&task.ID, &task.Name, &task.Description); err != nil {
+			if err == sql.ErrNoRows {
+				fmt.Println("No task")
+			} else {
+				log.Fatal(err)
+			}
+		} else {
+			taskList = append(taskList, task)
 		}
-		log.Fatal(err)
 	}
-	fmt.Println(task.ID, task.Name, task.Description)
+	PrintTasks(taskList)
 }

@@ -20,8 +20,11 @@ var listCmd = &cobra.Command{
 		fmt.Println("list called")
 		if All {
 			pkg.ListAll(Driver, DbPath)
-		} else if Id != 0 {
-			pkg.ListByID(Driver, DbPath, Id)
+		} else if Id != "" {
+			Ids = append(Ids, Id)
+			pkg.ListByID(Driver, DbPath, Ids)
+		} else if len(Ids) > 0 {
+			pkg.ListByID(Driver, DbPath, Ids)
 		}
 	},
 }
@@ -30,6 +33,7 @@ func init() {
 	rootCmd.AddCommand(listCmd)
 
 	listCmd.PersistentFlags().BoolVarP(&All, "all", "a", false, "List all tasks")
-	listCmd.PersistentFlags().Int64Var(&Id, "id", 0, "id of the task")
-	listCmd.MarkFlagsOneRequired("all", "id")
+	listCmd.PersistentFlags().StringVar(&Id, "id", "", "id of the task")
+	listCmd.PersistentFlags().StringSliceVar(&Ids, "ids", []string{}, "Ids to delete")
+	listCmd.MarkFlagsOneRequired("all", "id", "ids")
 }
